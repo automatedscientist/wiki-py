@@ -1,0 +1,32 @@
+[project]
+name = "wikikg"
+version = "0.1.0"
+description = "Python package for wiki-kg-dataset Mathematica code"
+readme = "README.md"
+requires-python = ">=3.10"
+dependencies = [
+    "datasets>=4.4.1",
+    "experta",
+    "pydantic>=2.0",
+    "tqdm>=4.0",
+]
+
+[project.optional-dependencies]
+experta = [
+    "experta>=1.9.4",
+]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["wikikg"]
+
+[tool.uv.sources]
+experta = { git = "https://github.com/nilp0inter/experta.git" }
+
+[dependency-groups]
+dev = [
+    "pytest>=9.0.1",
+]
