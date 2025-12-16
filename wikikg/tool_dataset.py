@@ -7,7 +7,6 @@ from __future__ import annotations
 
 import hashlib
 import json
-import os
 import random
 from dataclasses import dataclass
 from pathlib import Path
@@ -370,6 +369,10 @@ class ToolCallingDatasetGenerator:
 
         messages.append({"role": "assistant", "content": f"The final entity is {answer}."})
 
+        tool_calls_in_chain = len(tool_calls_metadata)
+        merged_provenance = dict(provenance or {})
+        merged_provenance["tool_calls_in_chain"] = tool_calls_in_chain
+
         return {
             "id": example_id,
             "tools": tools,
@@ -381,9 +384,10 @@ class ToolCallingDatasetGenerator:
                 "path_relations": graph_path.relations,
                 "path_directions": graph_path.directions,
                 "num_hops": graph_path.length,
+                "num_tool_calls": tool_calls_in_chain,
                 "hop_targets": hop_targets,
                 "tool_calls": tool_calls_metadata,
-                "provenance": provenance or {},
+                "provenance": merged_provenance,
             },
         }
 
@@ -459,8 +463,6 @@ def write_jsonl(records: Iterable[dict[str, Any]], output: Path) -> int:
 
 def default_provenance(db_path: Path, repo_root: Path) -> dict[str, Any]:
     return {
-        "wikikg_db_path": str(db_path),
         "wikikg_db_sha256": sha256_file(db_path) if db_path.exists() else None,
         "generator_git_sha": git_head_sha(repo_root),
-        "cwd": os.getcwd(),
     }
