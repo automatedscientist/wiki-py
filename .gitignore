@@ -10,10 +10,22 @@ dist/
 build/
 *.egg
 
+# Testing / tooling caches
+.pytest_cache/
+.coverage
+coverage.xml
+htmlcov/
+.mypy_cache/
+.ruff_cache/
+.tox/
+
 # Virtual environments
 .venv/
 venv/
 ENV/
+
+# OS junk
+.DS_Store
 
 # IDE/Editor
 .ropeproject/
@@ -27,3 +39,8 @@ ENV/
 
 # Cleanup folder
 to-delete/
+
+# bd (beads) issue tracking
+.beads/*
+!.beads/issues.jsonl
+!.beads/.gitignore
