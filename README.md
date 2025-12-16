@@ -356,6 +356,15 @@ uv run python scripts/export_dataset.py profiles --min-relations 5 -o data/profi
 uv run python scripts/export_dataset.py neighborhoods --limit 1000 -o data/neighborhoods.jsonl
 ```
 
+### Tool-Calling Dataset (Multihop)
+
+Generate replayable multihop tool-call trajectories from `paths.jsonl`:
+
+```bash
+uv run python scripts/generate_tool_dataset.py --db data/wikikg.db --paths data/paths.jsonl -o data/tool_calls.jsonl --num-examples 1000
+uv run python scripts/verify_tool_dataset.py --db data/wikikg.db --dataset data/tool_calls.jsonl
+```
+
 ### Full Example with Filters
 
 ```python
