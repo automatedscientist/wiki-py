@@ -365,6 +365,27 @@ uv run python scripts/generate_tool_dataset.py --db data/wikikg.db --paths data/
 uv run python scripts/verify_tool_dataset.py --db data/wikikg.db --dataset data/tool_calls.jsonl
 ```
 
+### Reward Construction (Executable / RL)
+
+Because each example is replayable (it stores tool names + JSON arguments and the gold hop targets), you can build an executable reward by running the model’s proposed tool calls against the DB.
+
+One simple shaped reward:
+
+```
+R = 0.2 * sum_i 1[hop_i correct] + 0.8 * 1[final correct] - 0.01 * (#tool_calls)
+```
+
+Where:
+- `hop_i correct`: the `i`th tool call’s DB results contain the required edge/neighbor for the gold next entity.
+- `final correct`: the final answer equals the gold endpoint entity.
+
+#### When multiple candidates are returned
+
+Hop reward is not “did it return a single object”; it is:
+- “did the model’s chosen continuation correspond to a result that actually exists in the tool output?”
+
+Ambiguity is handled by membership: the gold edge is one of the returned entries, and the model must “pick” it by continuing from the correct next entity (or explicitly naming it, depending on your action format).
+
 ### PyTorch DataLoader
 
 Load `tool_calls_*.jsonl` into a PyTorch `DataLoader` (optional dependency):
