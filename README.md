@@ -365,6 +365,18 @@ uv run python scripts/generate_tool_dataset.py --db data/wikikg.db --paths data/
 uv run python scripts/verify_tool_dataset.py --db data/wikikg.db --dataset data/tool_calls.jsonl
 ```
 
+### PyTorch DataLoader
+
+Load `tool_calls_*.jsonl` into a PyTorch `DataLoader` (optional dependency):
+
+```python
+from wikikg.torch_dataloader import build_tool_calls_dataloader
+
+dl = build_tool_calls_dataloader("data/tool_calls_1000.jsonl", batch_size=8, shuffle=True, mode="transcript")
+batch = next(iter(dl))
+print(batch["text"][0])
+```
+
 ### Full Example with Filters
 
 ```python
