@@ -365,6 +365,38 @@ uv run python scripts/generate_tool_dataset.py --db data/wikikg.db --paths data/
 uv run python scripts/verify_tool_dataset.py --db data/wikikg.db --dataset data/tool_calls.jsonl
 ```
 
+### Large-Scale Generation (Million+)
+
+Generate million-scale datasets for LLM training:
+
+```bash
+# Generate 1.5M paths + 1M trajectories (query_relations style) + all triplets
+uv run python scripts/generate_million.py --style query_relations
+
+# Generate 1M trajectories with get_neighbors style (reuses existing paths)
+uv run python scripts/generate_million.py --style get_neighbors --skip-paths --skip-triplets
+```
+
+**Output** (`data/million/`):
+
+| File | Records | Size | Description |
+|------|---------|------|-------------|
+| `paths_1m.jsonl` | 1,500,000 | 230 MB | Random walk paths through the graph |
+| `trajectories_query_relations_1m.jsonl` | 1,000,000 | 5.1 GB | Tool-call conversations (query_relations) |
+| `trajectories_get_neighbors_1m.jsonl` | 1,000,000 | 5.0 GB | Tool-call conversations (get_neighbors) |
+| `triplets_all.jsonl` | 365,923 | 30 MB | All valid subject-relation-object triplets |
+
+**Time estimates** (MacBook Pro):
+- Paths: ~2 min (optimized with pre-loaded entity names)
+- Trajectories: ~2 min per style
+- Triplets: ~24 sec
+
+**Resumability**: Progress is saved to `.progress_<style>.json`. Re-run the same command to resume after interruption.
+
+**Tool-calling styles**:
+- `query_relations`: Calls `query_relations(subject, obj, rel_type)` to filter triplets
+- `get_neighbors`: Calls `get_neighbors(entity, direction)` for graph exploration
+
 ### Reward Construction (Executable / RL)
 
 Because each example is replayable (it stores tool names + JSON arguments and the gold hop targets), you can build an executable reward by running the model’s proposed tool calls against the DB.

@@ -27,6 +27,9 @@ ENV/
 # OS junk
 .DS_Store
 
+# Log files
+*.log
+
 # IDE/Editor
 .ropeproject/
 .idea/

@@ -35,6 +35,7 @@ def main() -> None:
     parser.add_argument("--max-tool-results", type=int, default=50, help="Max tool results per call (required edge is always included)")
     parser.add_argument("--seed", type=int, default=0, help="RNG seed for shuffling/sampling")
     parser.add_argument("--keep-single-hop-answerable", action="store_true", help="Do not drop examples where answer is a direct neighbor of the start")
+    parser.add_argument("--no-dedup", action="store_true", help="Disable dedup by (style, entities, relations, directions)")
 
     args = parser.parse_args()
 
@@ -60,7 +61,7 @@ def main() -> None:
             min_hops=args.min_hops,
             max_hops=args.max_hops,
             provenance=provenance,
-            dedup=True,
+            dedup=not args.no_dedup,
             return_stats=True,
         )
         count = write_jsonl(examples, args.output)
